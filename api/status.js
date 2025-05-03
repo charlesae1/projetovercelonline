@@ -11,12 +11,18 @@ export default async function handler(req, res) {
   for (const name of names) {
     try {
       const url = `https://rubinot.com.br/?subtopic=characters&name=${encodeURIComponent(name)}`;
-      const { data } = await axios.get(url);
+      const { data } = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0',
+          'Accept-Language': 'pt-BR,pt;q=0.9',
+        },
+      });
       const $ = cheerio.load(data);
-      const isOnline = $('b:contains("Online")').hasClass('green');
+      const onlineTag = $('td:contains("Status:")').next('td').text().trim();
+      const isOnline = onlineTag.toLowerCase() === 'online';
       results.push({ name, status: isOnline ? 'Online' : 'Offline' });
     } catch (err) {
-      results.push({ name, status: 'Erro' });
+      results.push({ name, status: 'Erro', detalhe: err.message });
     }
   }
 
