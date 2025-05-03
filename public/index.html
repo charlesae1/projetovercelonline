@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Status dos Jogadores</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .online { color: green; }
+    .offline { color: red; }
+    ul { list-style: none; padding: 0; }
+  </style>
+</head>
+<body>
+  <h1>Status dos Personagens</h1>
+  <ul id="lista"></ul>
+
+  <script>
+    const players = ['Jinju', 'Weslley Corrupto', 'Assemblas Rush'];
+    const api = `/api/status?players=${players.map(encodeURIComponent).join(',')}`;
+
+    fetch(api)
+      .then(res => res.json())
+      .then(data => {
+        const lista = document.getElementById('lista');
+        data.forEach(player => {
+          const li = document.createElement('li');
+          li.innerHTML = `${player.name}: <strong class="${player.status.toLowerCase()}">${player.status}</strong>`;
+          lista.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
